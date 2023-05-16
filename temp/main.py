@@ -21,7 +21,7 @@ class Game:
         self.hints = 0
         self.s_col = 0      # initializes the selected column to 0
         self.s_row = 0      # initializes the selected row to 0
-        self.location = (0, 0)   # initializes the location of the selected box to 0
+        self.location = [0, 0]   # initializes the location of the selected box to 0
 
     def draw_game(self):
         increment = MARGIN      # sets the increment to the `MARGIN`
@@ -174,7 +174,7 @@ class Screen:
         self.active = False  # Initializes the state of the button as inactive
         # self.mouse_x = 0      THE BEGINNING VARIANT!!!
         # self.mouse_y = 0      THE BEGINNING VARIANT!!!
-        self.mouse = (0, 0)  # Initializes the position of the mouse
+        self.mouse = [0, 0]  # Initializes the position of the mouse
 
     def button(self):
         # self.mouse_x = pygame.mouse.get_pos()[0]      THE BEGINNING VARIANT!!!
