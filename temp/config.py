@@ -13,7 +13,7 @@ SECTION = SQUARE_NUM // 3       # the size of a section of the grid is set to 3x
 SECTION_SIZE = (WINDOW_SIZE - MARGIN * 2) / SECTION      # the size of a section in pixels
 SQUARE_SIZE = (WINDOW_SIZE - MARGIN * 2) / SQUARE_NUM    # the size of a square in pixels
 # the list of numbers that can be used in the grid
-NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+NUMBERS = ('1', '2', '3', '4', '5', '6', '7', '8', '9')
 
 COL_BLACK = (0, 0, 0)                   # the default color for text
 SELECT_COL_LIGHT_GREEN = (102, 205, 170)        # the color used for highlighting selected squares
