@@ -47,7 +47,7 @@ def generate():
     col = random.randrange(9)       # Choose a random column
     num = random.randrange(1, 10)   # Choose a random number from 1 to 9
 
-    for i in range(25):     # Fill 20 cells with valid random numbers
+    for i in range(25):     # Fill 25 cells with valid random numbers
         # If the chosen number is not valid or the cell is already filled, choose new random numbers
         while not valid(grid, num, (row, col)) or grid[row][col] != 0:
             row = random.randrange(9)
