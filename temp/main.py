@@ -2,7 +2,6 @@
 # перевірити гетери та сетери для атрибутів
 # FILE_MANAGER  !!!
 
-# import copy
 import time
 from solver import solve, find_empty
 from config import*
@@ -13,7 +12,7 @@ def timer(stop=False):
     global minutes, seconds     # access the global variables minutes and seconds
     # calculate the time elapsed since the start of the game in seconds
     if stop:
-        second = int((pygame.time.get_ticks() - start_ticks)/1000)
+        second = int((pygame.time.get_ticks() - start_time) / 1000)
         # second = int((pygame.time.get_ticks()) / 1000)
         minutes = second // 60
         # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
@@ -31,7 +30,7 @@ def timer(stop=False):
 
 
 def main():
-    global start_ticks
+    global start_time
     screen = "HOME"
     run, playing = True, True
     sudoku = Game()
@@ -46,8 +45,8 @@ def main():
                 if event.type == pygame.QUIT:
                     playing = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if end.active:
-                        start_ticks += pygame.time.get_ticks()
+                    if end.button_active:
+                        start_time += pygame.time.get_ticks()
                         sudoku = Game()
                         screen = "PLAY"
             if run:
@@ -67,16 +66,16 @@ def main():
                     if sudoku.mouse_active:
                         sudoku.detect_keys(event)
                     if event.key == pygame.K_SPACE:
-                        solve(sudoku.board)
+                        solve(sudoku.game_board)
                     if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
-                        sudoku.hints += 1
+                        sudoku.hints = (sudoku.hints + 1)
                         sudoku.detect_keys(event, True)
             SCREEN.fill(BACKGROUND_COL_WIGHT)
             timer(True)
             sudoku.draw_game()
             sudoku.draw_mistakes_hints()
 
-            if not find_empty(sudoku.board):
+            if not find_empty(sudoku.game_board):
                 screen = "END"
                 sudoku.mouse_active = False
 
@@ -91,8 +90,8 @@ def main():
                 if event.type == pygame.QUIT:
                     playing = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if home.active:
-                        start_ticks = pygame.time.get_ticks()
+                    if home.button_active:
+                        start_time = pygame.time.get_ticks()
                         screen = "PLAY"
             SCREEN.fill(BACKGROUND_COL_WIGHT)
             home.draw_home()

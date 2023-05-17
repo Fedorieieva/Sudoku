@@ -5,19 +5,44 @@ from config import*
 
 class Game:
     def __init__(self):
-        self.board = generate()    # IS USED IN MAIN need getter-setter    !!!!!!!!!!
-        # creates a board by calling the `generate` function
-        self._initial_board = tuple(map(tuple, self.board))
-        self.mouse_active = False   # IS USED IN MAIN need getter-setter    !!!!!!!!!!
-        # sets `mouse_active` to False
-        self.key_active = False     # IS USED IN MAIN need getter-setter    !!!!!!!!!!
-        # sets `key_active` to False
+        self._board = generate()  # creates a board by calling the `generate` function
+        self._initial_board = tuple(map(tuple, self._board))
+        self._mouse_active = False  # sets `mouse_active` to False
+        self._key_active = False  # sets `key_active` to False
         self._info = ''      # initializes an empty string for `info`
-        self.mistakes = 0   # IS USED IN MAIN need getter-setter    !!!!!!!!!!
-        self.hints = 0      # IS USED IN MAIN need getter-setter    !!!!!!!!!!
+        self._mistakes = 0
+        self._hints = 0
         self._selected_col = 0      # initializes the selected column to 0
         self._selected_row = 0      # initializes the selected row to 0
         self._location = [0, 0]   # initializes the location of the selected box to 0
+
+    @property
+    def game_board(self):
+        return self._board
+
+    @property
+    def mouse_active(self):
+        return self._mouse_active
+
+    @mouse_active.setter
+    def mouse_active(self, mouse_active):
+        self._mouse_active = mouse_active
+
+    @property
+    def key_active(self):
+        return self._key_active
+
+    @property
+    def mistakes(self):
+        return self._mistakes
+
+    @property
+    def hints(self):
+        return self._hints
+
+    @hints.setter
+    def hints(self, hints):
+        self._hints = hints
 
     def draw_game(self):    # IS USED IN MAIN
         increment = MARGIN      # sets the increment to the `MARGIN`
@@ -40,16 +65,16 @@ class Game:
 
         increment_x = increment_y = MARGIN + SQUARE_SIZE // 2  # initializes the increment_x and increment_y values
 
-        for row in range(len(self.board)):      # loops over the rows of the board
-            for col in range(len(self.board[0])):   # loops over the columns of the board
+        for row in range(len(self._board)):      # loops over the rows of the board
+            for col in range(len(self._board[0])):   # loops over the columns of the board
                 # if a box has a value that is not 0, render the value as text
-                if self.board[row][col] != 0 and self.board[row][col] != self._initial_board[row][col]:
-                    text = FONT.render(str(self.board[row][col]), True, COL_BLACK)
+                if self._board[row][col] != 0 and self._board[row][col] != self._initial_board[row][col]:
+                    text = FONT.render(str(self._board[row][col]), True, COL_BLACK)
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
                 elif self._initial_board[row][col] != 0:
-                    text = FONT.render(str(self.board[row][col]), True, (0, 0, 255))
+                    text = FONT.render(str(self._board[row][col]), True, (0, 0, 255))
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
@@ -77,7 +102,7 @@ class Game:
         # If the mouse is inside the game board and the square the mouse is over is empty,
         # set the mouse_active flag to true.
         if (mouse_x > MARGIN) and (mouse_x < WINDOW_SIZE - MARGIN) and (mouse_y > MARGIN) and \
-                (mouse_y < WINDOW_SIZE - MARGIN) and self.board[self._selected_row][self._selected_col] == 0:
+                (mouse_y < WINDOW_SIZE - MARGIN) and self._board[self._selected_row][self._selected_col] == 0:
             self._info = ''  # Reset the info message.
             self.mouse_active = True
         else:   # If the mouse is outside the game board or the square the mouse is over
@@ -86,7 +111,7 @@ class Game:
             del self._selected_col
             del self._location
             self.mouse_active = False   # Set the mouse_active flag to false.
-            self.key_active = False     # Set the key_active flag to false.# IS USED IN MAIN
+            self._key_active = False     # Set the key_active flag to false.# IS USED IN MAIN
 
     # This method draws a selection box around the square that the mouse is currently over.
     def draw_sel_box(self):     # IS USED IN MAIN
@@ -102,7 +127,7 @@ class Game:
 
         if info.unicode in NUMBERS:
             # If it is, set the key_active flag to True and store the number in the info attribute
-            self.key_active = True
+            self._key_active = True
             self._info = info.unicode
         # Check if the pressed key is the Enter key and there is a number stored in the info attribute
         elif info.key == 13 and self._info in NUMBERS:
@@ -111,7 +136,7 @@ class Game:
             self._finalize_key()
         else:
             # Otherwise, set the key_active flag to False and clear the info attribute
-            self.key_active = False
+            self._key_active = False
             self._info = ''
 
     def draw_num(self):     # IS USED IN MAIN
@@ -125,26 +150,26 @@ class Game:
 
     # def finalize_key(self, event): THE BEGINNING VARIANT!!!
     def _finalize_key(self, hint=False):
-        new = copy.deepcopy(self.board)     # create a copy of the current board
+        board_copy = copy.deepcopy(self._board)     # create a copy of the current board
         # set the value of the clicked square to the input number
-        new[self._selected_row][self._selected_col] = int(self._info)
+        board_copy[self._selected_row][self._selected_col] = int(self._info)
         # if the move is valid and the board can be solved:
-        if valid(self.board, int(self._info), (self._selected_row, self._selected_col)) and solve(new):
+        if valid(self._board, int(self._info), (self._selected_row, self._selected_col)) and solve(board_copy):
             # update the board with the new value
-            self.board[self._selected_row][self._selected_col] = int(self._info)
+            self._board[self._selected_row][self._selected_col] = int(self._info)
         elif not hint:    # if the user did not request a hint:
-            self.mistakes += 1      # increase the mistakes count
+            self._mistakes += 1      # increase the mistakes count
         self.mouse_active = False  # deactivate mouse
-        self.key_active = False  # deactivate keyboard
+        self._key_active = False  # deactivate keyboard
         self._info = ''      # reset input information
 
     def draw_mistakes_hints(self):      # IS USED IN MAIN
         # create a text object with the number of mistakes
         for i in range(2):
             if i == 0:
-                text = LOWER_FONT.render("Mistakes " + str(self.mistakes), True, COL_BLACK)
+                text = LOWER_FONT.render("Mistakes " + str(self._mistakes), True, COL_BLACK)
             else:
-                text = LOWER_FONT.render("Hints " + str(self.hints), True, COL_BLACK)
+                text = LOWER_FONT.render("Hints " + str(self._hints), True, COL_BLACK)
             text_rect = text.get_rect()     # get the rectangle of the text object
             #  center the rectangle at the bottom of the screen
             text_rect.center = (WINDOW_SIZE // 7.5, WINDOW_SIZE - (MARGIN // 2))
@@ -169,11 +194,14 @@ class Screen:
         self._small_text = pygame.font.SysFont("Calibri", int(self._size_x * 0.1))
         # set the font size and type for the button text
         self._button_text = pygame.font.SysFont("Calibri", int(self._size_x * 0.12), 1.5)
-        self.active = False  # IS USED IN MAIN need getter-setter    !!!!!!!!!!
-        # Initializes the state of the button as inactive
+        self._button_active = False  # Initializes the state of the button as inactive
         # self.mouse_x = 0      THE BEGINNING VARIANT!!!
         # self.mouse_y = 0      THE BEGINNING VARIANT!!!
         self._mouse = [0, 0]  # Initializes the position of the mouse
+
+    @property
+    def button_active(self):
+        return self._button_active
 
     def _button(self):
         # self.mouse_x = pygame.mouse.get_pos()[0]      THE BEGINNING VARIANT!!!
@@ -189,14 +217,14 @@ class Screen:
             # if the mouse is over the button, draw the button with a different color and set it as active
             pygame.draw.rect(SCREEN, S_BUTTON_COL_DARK_BLUE,
                              (int(self._button_x), int(self._button_y), int(self._size_x), int(self._size_y)))
-            self.active = True
+            self._button_active = True
         else:
             # pygame.draw.rect(SCREEN, BUTTON_COL, (self.button_x, self.button_y, self.size_x, self.size_y))
             # THE BEGINNING VARIANT!!!
             # if the mouse is not over the button, draw the button with the default color and set it as inactive
             pygame.draw.rect(SCREEN, BUTTON_COL_LIGHT_BLUE,
                              (int(self._button_x), int(self._button_y), int(self._size_x), int(self._size_y)))
-            self.active = False
+            self._button_active = False
 
 
 class HomeScreen(Screen):
