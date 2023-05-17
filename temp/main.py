@@ -4,14 +4,29 @@
 
 import time
 from solver import solve, find_empty
-from config import *
+from config import*
 from classes import Game, HomeScreen, EndScreen
 
 
 class Main:
     @staticmethod
+    def _write_to_file(board, mistakes=0, hint=0, timer=()):
+        with open("sudoku_file_manager", 'a') as file:
+            if sum(sum(row) for row in board) < 405:
+                file.write("SUDOKU GAME:\n")
+                file.write("\tPUZZLE TO SOLVE:\n\n")
+                for row in board:
+                    file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
+            else:
+                file.write("\n\tSOLVED PUZZLE:\n\n")
+                for row in board:
+                    file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
+                file.write("\nMistakes " + str(mistakes) + "\t\tHints " + str(hint))
+                file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
+
+    @staticmethod
     def _timer(stop=False):
-        global minutes, seconds     # access the global variables minutes and seconds
+        global minutes, seconds  # access the global variables minutes and seconds
         # calculate the time elapsed since the start of the game in seconds
         if stop:
             second = int((pygame.time.get_ticks() - start_time) / 1000)
@@ -38,6 +53,7 @@ class Main:
         sudoku = Game()
         home = HomeScreen()
         end = EndScreen()
+        Main._write_to_file(sudoku.game_board)
 
         while playing:
             if screen == "END":
@@ -50,9 +66,11 @@ class Main:
                         if end.button_active:
                             start_time += pygame.time.get_ticks()
                             sudoku = Game()
+                            Main._write_to_file(sudoku.game_board)
                             screen = "PLAY"
                 if run:
                     time.sleep(3)
+                    Main._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 end.draw_over(sudoku.mistakes, time_played)
                 run = False
