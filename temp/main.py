@@ -10,25 +10,30 @@ from config import*
 from classes import Game, HomeScreen, EndScreen
 
 
-def timer():
+def timer(stop=False):
     global minutes, seconds     # access the global variables minutes and seconds
     # calculate the time elapsed since the start of the game in seconds
-    second = int((pygame.time.get_ticks() - start_ticks)/1000)
-    minutes = second // 60
-    # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
-    seconds = second - minutes * 60
-    if seconds == 60:  # if the seconds have reached 60, reset to 0
-        seconds = 0
-    # create a string to display the time in the format "Timer: MM:SS"
-    compound = "Timer: " + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
-    # create a text object to display the time on the screen
-    text = LOWER_FONT.render(compound, True, COL_BLACK)
-    # blit the text object onto the bottom right corner of the screen
-    SCREEN.blit(text, (WINDOW_SIZE - MARGIN - WINDOW_SIZE * 0.17, WINDOW_SIZE * 0.925))
+    if stop:
+        second = int((pygame.time.get_ticks() - start_ticks)/1000)
+        # second = int((pygame.time.get_ticks()) / 1000)
+        minutes = second // 60
+        # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
+        seconds = second - minutes * 60
+        if seconds == 60:  # if the seconds have reached 60, reset to 0
+            seconds = 0
+        # create a string to display the time in the format "Timer: MM:SS"
+        compound = "Timer: " + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
+        # create a text object to display the time on the screen
+        text = LOWER_FONT.render(compound, True, COL_BLACK)
+        # blit the text object onto the bottom right corner of the screen
+        SCREEN.blit(text, (WINDOW_SIZE - MARGIN - WINDOW_SIZE * 0.17, WINDOW_SIZE * 0.925))
+    else:
+        return minutes, seconds
 
 
 def main():
     global start_ticks
+    global minutes, seconds
     screen = "HOME"
     run, playing = True, True
     sudoku = Game()
@@ -37,6 +42,7 @@ def main():
 
     while playing:
         if screen == "END":
+            time_played = timer(False)
             time.sleep(3)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -44,15 +50,17 @@ def main():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if end.active:
                         start_ticks += pygame.time.get_ticks()
+                        minutes = seconds = 0
                         sudoku = Game()
                         screen = "PLAY"
             if run:
                 time.sleep(3)
             SCREEN.fill(BACKGROUND_COL_WIGHT)
-            end.draw_over(sudoku.mistakes)
+            end.draw_over(sudoku.mistakes, time_played)
             run = False
 
         if screen == "PLAY":
+            # minutes = seconds = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     playing = False
@@ -67,9 +75,8 @@ def main():
                     if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
                         sudoku.hints += 1
                         sudoku.detect_keys(event, True)
-
             SCREEN.fill(BACKGROUND_COL_WIGHT)
-            timer()
+            timer(True)
             sudoku.draw_game()
             sudoku.draw_mistakes_hints()
 

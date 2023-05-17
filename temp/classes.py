@@ -229,14 +229,14 @@ class EndScreen(Screen):
         # Defines the font for the button text
         self.button_text = pygame.font.SysFont("Calibri", int(self.size_x * 0.075), 1.5)
 
-    def draw_over(self, mistakes):
+    def draw_over(self, mistakes, time):
         text = self.main_text.render("GAME OVER!", True, COL_BLACK)     # Renders the "GAME OVER!" message
         text_rect = text.get_rect()
         text_rect.center = (WINDOW_SIZE // 2, WINDOW_SIZE * 0.35)     # Sets the position of the "GAME OVER!" message
         SCREEN.blit(text, text_rect)
         # Creates a message with the end game statistics
         compound = "You finished with " + str(mistakes) + " mistakes and in the time " + \
-                   str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
+                   str(time[0]).zfill(2) + ":" + str(time[1]).zfill(2)
         text = FONT.render(compound, True, COL_BLACK)       # Renders the message
         text_rect = text.get_rect()
         text_rect.center = (WINDOW_SIZE // 2, WINDOW_SIZE // 2)       # Sets the position of the message
