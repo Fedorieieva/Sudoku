@@ -1,4 +1,3 @@
-# позбутися глобальних змінних
 # по сожливості додати кілька рівнів складності
 # перевірити гетери та сетери для атрибутів
 # FILE_MANAGER  !!!
@@ -33,7 +32,6 @@ def timer(stop=False):
 
 def main():
     global start_ticks
-    global minutes, seconds
     screen = "HOME"
     run, playing = True, True
     sudoku = Game()
@@ -50,7 +48,6 @@ def main():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if end.active:
                         start_ticks += pygame.time.get_ticks()
-                        minutes = seconds = 0
                         sudoku = Game()
                         screen = "PLAY"
             if run:
@@ -60,7 +57,6 @@ def main():
             run = False
 
         if screen == "PLAY":
-            # minutes = seconds = 0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     playing = False
