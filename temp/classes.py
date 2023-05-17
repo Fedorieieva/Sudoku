@@ -1,11 +1,12 @@
 import copy
-from solver import solve, generate, valid
+from solver import Solver
 from config import*
 
 
 class Game:
     def __init__(self):
-        self._board = generate()  # creates a board by calling the `generate` function
+        self._solver = Solver()
+        self._board = self._solver.generate()  # creates a board by calling the `generate` function
         self._initial_board = tuple(map(tuple, self._board))
         self._mouse_active = False  # sets `mouse_active` to False
         self._key_active = False  # sets `key_active` to False
@@ -154,7 +155,8 @@ class Game:
         # set the value of the clicked square to the input number
         board_copy[self._selected_row][self._selected_col] = int(self._info)
         # if the move is valid and the board can be solved:
-        if valid(self._board, int(self._info), (self._selected_row, self._selected_col)) and solve(board_copy):
+        if self._solver.valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
+                and self._solver.solve(board_copy):
             # update the board with the new value
             self._board[self._selected_row][self._selected_col] = int(self._info)
         elif not hint:    # if the user did not request a hint:

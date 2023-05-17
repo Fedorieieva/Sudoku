@@ -1,13 +1,14 @@
 # по сожливості додати кілька рівнів складності
 
 import time
-from solver import solve, find_empty
+from solver import Solver
 from config import*
 from classes import Game, HomeScreen, EndScreen
 
 
 class Main:
     def __init__(self):
+        self._solver = Solver()
         self._minutes = 0
         self._seconds = 0
         self._start_time = 0
@@ -27,7 +28,6 @@ class Main:
                 file.write("\nMistakes: " + str(mistakes) + "\t\tHints: " + str(hint))
                 file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
 
-    # @staticmethod
     def _timer(self, stop=False):
         # global minutes, seconds  # access the global variables minutes and seconds
         # calculate the time elapsed since the start of the game in seconds
@@ -48,7 +48,6 @@ class Main:
         else:
             return self._minutes, self._seconds
 
-    # @staticmethod
     def game(self):
         # global start_time
         screen = "HOME"
@@ -61,7 +60,6 @@ class Main:
 
         while playing:
             if screen == "END":
-                # self._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                 time.sleep(3)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -89,7 +87,7 @@ class Main:
                         if sudoku.mouse_active:
                             sudoku.detect_keys(event)
                         if event.key == pygame.K_SPACE:
-                            solve(sudoku.game_board)
+                            self._solver.solve(sudoku.game_board)
                         if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
                             sudoku.hints = (sudoku.hints + 1)
                             sudoku.detect_keys(event, True)
@@ -98,7 +96,7 @@ class Main:
                 sudoku.draw_game()
                 sudoku.draw_mistakes_hints()
 
-                if not find_empty(sudoku.game_board):
+                if not self._solver.find_empty(sudoku.game_board):
                     time_played = self._timer(False)
                     self._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                     screen = "END"
