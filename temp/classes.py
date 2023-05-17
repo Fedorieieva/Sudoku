@@ -167,16 +167,16 @@ class Game:
         # create a text object with the number of mistakes
         for i in range(2):
             if i == 0:
-                text = LOWER_FONT.render("Mistakes " + str(self._mistakes), True, COL_BLACK)
+                text = LOWER_FONT.render("Mistakes: " + str(self._mistakes), True, COL_BLACK)
             else:
-                text = LOWER_FONT.render("Hints " + str(self._hints), True, COL_BLACK)
+                text = LOWER_FONT.render("Hints: " + str(self._hints), True, COL_BLACK)
             text_rect = text.get_rect()     # get the rectangle of the text object
             #  center the rectangle at the bottom of the screen
             text_rect.center = (WINDOW_SIZE // 7.5, WINDOW_SIZE - (MARGIN // 2))
             if i == 0:
                 SCREEN.blit(text, (MARGIN, WINDOW_SIZE * 0.925))    # draw the text at the bottom of the screen
             else:
-                SCREEN.blit(text, (MARGIN + 245, WINDOW_SIZE * 0.925))
+                SCREEN.blit(text, (MARGIN + 239, WINDOW_SIZE * 0.925))
 
 
 class Screen:

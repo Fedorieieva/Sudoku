@@ -1,9 +1,9 @@
 import pygame
 
 
-minutes = 0     # the initial value of minutes on the timer is set to 0
-seconds = 0     # the initial value of seconds on the timer is set to 0
-start_time = 0
+# minutes = 0     # the initial value of minutes on the timer is set to 0
+# seconds = 0     # the initial value of seconds on the timer is set to 0
+# start_time = 0
 
 WINDOW_SIZE = 700      # the size of the game window is set to 700x700 pixels
 MARGIN = 75     # the margin size around the grid is set to 75 pixels

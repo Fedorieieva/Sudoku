@@ -1,6 +1,4 @@
 # по сожливості додати кілька рівнів складності
-# перевірити гетери та сетери для атрибутів
-# FILE_MANAGER  !!!
 
 import time
 from solver import solve, find_empty
@@ -9,6 +7,11 @@ from classes import Game, HomeScreen, EndScreen
 
 
 class Main:
+    def __init__(self):
+        self._minutes = 0
+        self._seconds = 0
+        self._start_time = 0
+
     @staticmethod
     def _write_to_file(board, mistakes=0, hint=0, timer=()):
         with open("sudoku_file_manager", 'a') as file:
@@ -21,56 +24,56 @@ class Main:
                 file.write("\n\tSOLVED PUZZLE:\n\n")
                 for row in board:
                     file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
-                file.write("\nMistakes " + str(mistakes) + "\t\tHints " + str(hint))
+                file.write("\nMistakes: " + str(mistakes) + "\t\tHints: " + str(hint))
                 file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
 
-    @staticmethod
-    def _timer(stop=False):
-        global minutes, seconds  # access the global variables minutes and seconds
+    # @staticmethod
+    def _timer(self, stop=False):
+        # global minutes, seconds  # access the global variables minutes and seconds
         # calculate the time elapsed since the start of the game in seconds
         if stop:
-            second = int((pygame.time.get_ticks() - start_time) / 1000)
+            second = int((pygame.time.get_ticks() - self._start_time) / 1000)
             # second = int((pygame.time.get_ticks()) / 1000)
-            minutes = second // 60
+            self._minutes = second // 60
             # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
-            seconds = second - minutes * 60
-            if seconds == 60:  # if the seconds have reached 60, reset to 0
-                seconds = 0
+            self._seconds = second - self._minutes * 60
+            if self._seconds == 60:  # if the seconds have reached 60, reset to 0
+                self._seconds = 0
             # create a string to display the time in the format "Timer: MM:SS"
-            compound = "Timer: " + str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
+            compound = "Timer: " + str(self._minutes).zfill(2) + ":" + str(self._seconds).zfill(2)
             # create a text object to display the time on the screen
             text = LOWER_FONT.render(compound, True, COL_BLACK)
             # blit the text object onto the bottom right corner of the screen
             SCREEN.blit(text, (WINDOW_SIZE - MARGIN - WINDOW_SIZE * 0.17, WINDOW_SIZE * 0.925))
         else:
-            return minutes, seconds
+            return self._minutes, self._seconds
 
-    @staticmethod
-    def game():
-        global start_time
+    # @staticmethod
+    def game(self):
+        # global start_time
         screen = "HOME"
         run, playing = True, True
         sudoku = Game()
         home = HomeScreen()
         end = EndScreen()
-        Main._write_to_file(sudoku.game_board)
+        self._write_to_file(sudoku.game_board)
+        time_played = 0
 
         while playing:
             if screen == "END":
-                time_played = Main._timer(False)
+                # self._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                 time.sleep(3)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         playing = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if end.button_active:
-                            start_time += pygame.time.get_ticks()
+                            self._start_time += pygame.time.get_ticks()
                             sudoku = Game()
-                            Main._write_to_file(sudoku.game_board)
+                            self._write_to_file(sudoku.game_board)
                             screen = "PLAY"
                 if run:
                     time.sleep(3)
-                    Main._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 end.draw_over(sudoku.mistakes, time_played)
                 run = False
@@ -91,11 +94,13 @@ class Main:
                             sudoku.hints = (sudoku.hints + 1)
                             sudoku.detect_keys(event, True)
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
-                Main._timer(True)
+                self._timer(True)
                 sudoku.draw_game()
                 sudoku.draw_mistakes_hints()
 
                 if not find_empty(sudoku.game_board):
+                    time_played = self._timer(False)
+                    self._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                     screen = "END"
                     sudoku.mouse_active = False
 
@@ -111,7 +116,7 @@ class Main:
                         playing = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if home.button_active:
-                            start_time = pygame.time.get_ticks()
+                            self._start_time = pygame.time.get_ticks()
                             screen = "PLAY"
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 home.draw_home()
@@ -120,4 +125,4 @@ class Main:
             CLOCK.tick(30)
 
 
-Main.game()
+Main().game()
