@@ -29,76 +29,77 @@ def timer(stop=False):
         return minutes, seconds
 
 
-def main():
-    global start_time
-    screen = "HOME"
-    run, playing = True, True
-    sudoku = Game()
-    home = HomeScreen()
-    end = EndScreen()
+class Main:
+    @staticmethod
+    def game():
+        global start_time
+        screen = "HOME"
+        run, playing = True, True
+        sudoku = Game()
+        home = HomeScreen()
+        end = EndScreen()
 
-    while playing:
-        if screen == "END":
-            time_played = timer(False)
-            time.sleep(3)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    playing = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if end.button_active:
-                        start_time += pygame.time.get_ticks()
-                        sudoku = Game()
-                        screen = "PLAY"
-            if run:
+        while playing:
+            if screen == "END":
+                time_played = timer(False)
                 time.sleep(3)
-            SCREEN.fill(BACKGROUND_COL_WIGHT)
-            end.draw_over(sudoku.mistakes, time_played)
-            run = False
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        playing = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if end.button_active:
+                            start_time += pygame.time.get_ticks()
+                            sudoku = Game()
+                            screen = "PLAY"
+                if run:
+                    time.sleep(3)
+                SCREEN.fill(BACKGROUND_COL_WIGHT)
+                end.draw_over(sudoku.mistakes, time_played)
+                run = False
 
-        if screen == "PLAY":
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    playing = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    sudoku.find_location(mouse_x, mouse_y)
-                if event.type == pygame.KEYDOWN:
-                    if sudoku.mouse_active:
-                        sudoku.detect_keys(event)
-                    if event.key == pygame.K_SPACE:
-                        solve(sudoku.game_board)
-                    if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
-                        sudoku.hints = (sudoku.hints + 1)
-                        sudoku.detect_keys(event, True)
-            SCREEN.fill(BACKGROUND_COL_WIGHT)
-            timer(True)
-            sudoku.draw_game()
-            sudoku.draw_mistakes_hints()
+            if screen == "PLAY":
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        playing = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        sudoku.find_location(mouse_x, mouse_y)
+                    if event.type == pygame.KEYDOWN:
+                        if sudoku.mouse_active:
+                            sudoku.detect_keys(event)
+                        if event.key == pygame.K_SPACE:
+                            solve(sudoku.game_board)
+                        if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
+                            sudoku.hints = (sudoku.hints + 1)
+                            sudoku.detect_keys(event, True)
+                SCREEN.fill(BACKGROUND_COL_WIGHT)
+                timer(True)
+                sudoku.draw_game()
+                sudoku.draw_mistakes_hints()
 
-            if not find_empty(sudoku.game_board):
-                screen = "END"
-                sudoku.mouse_active = False
+                if not find_empty(sudoku.game_board):
+                    screen = "END"
+                    sudoku.mouse_active = False
 
-            if sudoku.mouse_active:
-                sudoku.draw_sel_box()
+                if sudoku.mouse_active:
+                    sudoku.draw_sel_box()
 
-            if sudoku.key_active:
-                sudoku.draw_num()
+                if sudoku.key_active:
+                    sudoku.draw_num()
 
-        if screen == "HOME":
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    playing = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if home.button_active:
-                        start_time = pygame.time.get_ticks()
-                        screen = "PLAY"
-            SCREEN.fill(BACKGROUND_COL_WIGHT)
-            home.draw_home()
+            if screen == "HOME":
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        playing = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if home.button_active:
+                            start_time = pygame.time.get_ticks()
+                            screen = "PLAY"
+                SCREEN.fill(BACKGROUND_COL_WIGHT)
+                home.draw_home()
 
-        pygame.display.update()
-        CLOCK.tick(30)
+            pygame.display.update()
+            CLOCK.tick(30)
 
 
-if __name__ == "__main__":
-    main()
+Main.game()
