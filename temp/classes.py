@@ -66,8 +66,8 @@ class Game:
 
         increment_x = increment_y = MARGIN + SQUARE_SIZE // 2  # initializes the increment_x and increment_y values
 
-        for row in range(len(self._board)):      # loops over the rows of the board
-            for col in range(len(self._board[0])):   # loops over the columns of the board
+        for row in range(9):      # loops over the rows of the board
+            for col in range(9):   # loops over the columns of the board
                 # if a box has a value that is not 0, render the value as text
                 if self._board[row][col] != 0 and self._board[row][col] != self._initial_board[row][col]:
                     text = FONT.render(str(self._board[row][col]), True, COL_BLACK)

@@ -29,11 +29,8 @@ class Main:
                 file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
 
     def _timer(self, stop=False):
-        # global minutes, seconds  # access the global variables minutes and seconds
-        # calculate the time elapsed since the start of the game in seconds
         if stop:
             second = int((pygame.time.get_ticks() - self._start_time) / 1000)
-            # second = int((pygame.time.get_ticks()) / 1000)
             self._minutes = second // 60
             # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
             self._seconds = second - self._minutes * 60
@@ -49,14 +46,13 @@ class Main:
             return self._minutes, self._seconds
 
     def game(self):
-        # global start_time
         screen = "HOME"
         run, playing = True, True
         sudoku = Game()
         home = HomeScreen()
         end = EndScreen()
         self._write_to_file(sudoku.game_board)
-        time_played = 0
+        time_played = 0, 0
 
         while playing:
             if screen == "END":
