@@ -90,7 +90,8 @@ class Main:
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 self._timer(True)
                 sudoku.draw_game()
-                sudoku.draw_mistakes_hints()
+                sudoku.draw_mistakes()
+                sudoku.draw_hints()
 
                 if not self._solver.find_empty(sudoku.game_board):
                     time_played = self._timer(False)

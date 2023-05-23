@@ -138,7 +138,7 @@ class Game:
         else:
             # Otherwise, set the key_active flag to False and clear the info attribute
             self._key_active = False
-            self._info = ''
+            # self._info = ''
 
     def draw_num(self):     # IS USED IN MAIN
         # Create a text surface for the stored number with blue text
@@ -165,20 +165,14 @@ class Game:
         self._key_active = False  # deactivate keyboard
         self._info = ''      # reset input information
 
-    def draw_mistakes_hints(self):      # IS USED IN MAIN
+    def draw_mistakes(self):
         # create a text object with the number of mistakes
-        for i in range(2):
-            if i == 0:
-                text = LOWER_FONT.render("Mistakes: " + str(self._mistakes), True, COL_BLACK)
-            else:
-                text = LOWER_FONT.render("Hints: " + str(self._hints), True, COL_BLACK)
-            text_rect = text.get_rect()     # get the rectangle of the text object
-            #  center the rectangle at the bottom of the screen
-            text_rect.center = (WINDOW_SIZE // 7.5, WINDOW_SIZE - (MARGIN // 2))
-            if i == 0:
-                SCREEN.blit(text, (MARGIN, WINDOW_SIZE * 0.925))    # draw the text at the bottom of the screen
-            else:
-                SCREEN.blit(text, (MARGIN + 239, WINDOW_SIZE * 0.925))
+        text = LOWER_FONT.render("Mistakes " + str(self._mistakes), True, COL_BLACK)
+        SCREEN.blit(text, (MARGIN, WINDOW_SIZE * 0.925))       # draw the text at the bottom of the screen
+
+    def draw_hints(self):
+        text = LOWER_FONT.render("Hints: " + str(self._hints), True, COL_BLACK)
+        SCREEN.blit(text, (MARGIN + 239, WINDOW_SIZE * 0.925))
 
 
 class Screen:
