@@ -32,15 +32,11 @@ class Main:
         if stop:
             second = int((pygame.time.get_ticks() - self._start_time) / 1000)
             self._minutes = second // 60
-            # calculate the seconds by subtracting the minutes (converted back to seconds) from the total seconds
             self._seconds = second - self._minutes * 60
-            if self._seconds == 60:  # if the seconds have reached 60, reset to 0
+            if self._seconds == 60:
                 self._seconds = 0
-            # create a string to display the time in the format "Timer: MM:SS"
             compound = "Timer: " + str(self._minutes).zfill(2) + ":" + str(self._seconds).zfill(2)
-            # create a text object to display the time on the screen
             text = LOWER_FONT.render(compound, True, COL_BLACK)
-            # blit the text object onto the bottom right corner of the screen
             SCREEN.blit(text, (WINDOW_SIZE - MARGIN - WINDOW_SIZE * 0.17, WINDOW_SIZE * 0.925))
         else:
             return self._minutes, self._seconds

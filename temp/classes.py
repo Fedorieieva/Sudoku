@@ -122,6 +122,8 @@ class Game:
     def detect_keys(self, info, hint=False):    # IS USED IN MAIN
         # Check if the pressed key is a number from 1 to 9
         if hint:
+            board_copy = copy.deepcopy(self._board)
+            self._selected_row, self._selected_col = self._solver.find_best_indexes(board_copy)[0]
             for i in range(1, 10):
                 self._info = str(i)
                 self._finalize_key(True)
@@ -153,6 +155,7 @@ class Game:
     def _finalize_key(self, hint=False):
         board_copy = copy.deepcopy(self._board)     # create a copy of the current board
         # set the value of the clicked square to the input number
+
         board_copy[self._selected_row][self._selected_col] = int(self._info)
         # if the move is valid and the board can be solved:
         if self._solver.valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \

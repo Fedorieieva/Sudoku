@@ -63,3 +63,61 @@ class Solver:
             self._board = self.generate()
 
         return self._board
+
+    @staticmethod
+    def calculate_score(board, row, col):
+        score = 0
+
+        # Check the number of empty cells in the same row
+        for c in range(9):
+            if board[row][c] == 0:
+                score += 1
+
+        # Check the number of empty cells in the same column
+        for r in range(9):
+            if board[r][col] == 0:
+                score += 1
+
+        # Check the number of empty cells in the same 3x3 box
+        box_start_row = (row // 3) * 3
+        box_start_col = (col // 3) * 3
+        for r in range(box_start_row, box_start_row + 3):
+            for c in range(box_start_col, box_start_col + 3):
+                if board[r][c] == 0:
+                    score += 1
+
+        return score
+
+    @staticmethod
+    def find_best_indexes(board):
+        scores = []
+
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    score = Solver.calculate_score(board, row, col)
+                    scores.append((score, row, col))
+
+        scores.sort(key=lambda x: x[0])  # Sort the scores based on the first element (score) in ascending order
+
+        best_indexes = [(row, col) for _, row, col in scores]
+
+        # Find best indexes for the row
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    score = Solver.calculate_score(board, row, col)
+                    if score == scores[0][0]:
+                        best_indexes.append((row, col))
+
+        # Find best indexes for the column
+        for col in range(9):
+            for row in range(9):
+                if board[row][col] == 0:
+                    score = Solver.calculate_score(board, row, col)
+                    if score == scores[0][0]:
+                        best_indexes.append((row, col))
+
+        return best_indexes
+
+
