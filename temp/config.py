@@ -16,7 +16,6 @@ COL_BLACK = (0, 0, 0)                   # the default color for text
 SELECT_COL_LIGHT_GREEN = (102, 205, 170)        # the color used for highlighting selected squares
 BUTTON_COL_LIGHT_BLUE = (30, 144, 255)        # the color used for buttons
 S_BUTTON_COL_DARK_BLUE = (24, 116, 205)        # the color used for selected buttons
-
 BACKGROUND_COL_WIGHT = (255, 255, 255)    # the color used for the background
 
 FONT_SIZE = int((WINDOW_SIZE - MARGIN * 2) * 0.06)     # the font size for the numbers on the grid

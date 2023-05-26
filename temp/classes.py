@@ -1,12 +1,14 @@
 import copy
-from solver import Solver
+# from solver import Solver
+from solver import*
 from config import*
 
 
 class Game:
     def __init__(self):
-        self._solver = Solver()
-        self._board = self._solver.generate()  # creates a board by calling the `generate` function
+        # self._solver = Solver()
+        # self._board = self._solver.generate()  # creates a board by calling the `generate` function
+        self._board = generate()  # creates a board by calling the `generate` function
         self._initial_board = tuple(map(tuple, self._board))
         self._mouse_active = False  # sets `mouse_active` to False
         self._key_active = False  # sets `key_active` to False
@@ -123,7 +125,8 @@ class Game:
         # Check if the pressed key is a number from 1 to 9
         if hint:
             board_copy = copy.deepcopy(self._board)
-            self._selected_row, self._selected_col = self._solver.find_best_indexes(board_copy)[0]
+            # self._selected_row, self._selected_col = self._solver.find_best_indexes(board_copy)[0]
+            self._selected_row, self._selected_col = find_best_indexes(board_copy)[0]
             for i in range(1, 10):
                 self._info = str(i)
                 self._finalize_key(True)
@@ -158,8 +161,10 @@ class Game:
 
         board_copy[self._selected_row][self._selected_col] = int(self._info)
         # if the move is valid and the board can be solved:
-        if self._solver.valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
-                and self._solver.solve(board_copy):
+        # if self._solver.valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
+        #         and self._solver.solve(board_copy):
+        if valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
+                and solve(board_copy):
             # update the board with the new value
             self._board[self._selected_row][self._selected_col] = int(self._info)
         elif not hint:    # if the user did not request a hint:
