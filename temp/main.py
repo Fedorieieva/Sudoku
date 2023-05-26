@@ -1,8 +1,5 @@
-# по сожливості додати кілька рівнів складності
-
 import time
 # from solver import Solver
-from solver import*
 from config import*
 from classes import Game, HomeScreen, EndScreen
 
@@ -80,8 +77,7 @@ class Main:
                         if sudoku.mouse_active:
                             sudoku.detect_keys(event)
                         if event.key == pygame.K_SPACE:
-                            # self._solver.solve(sudoku.game_board)
-                            solve(sudoku.game_board)
+                            sudoku.solve(sudoku.game_board)
                         if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
                             sudoku.hints = (sudoku.hints + 1)
                             sudoku.detect_keys(event, True)
@@ -91,8 +87,7 @@ class Main:
                 sudoku.draw_mistakes()
                 sudoku.draw_hints()
 
-                # if not self._solver.find_empty(sudoku.game_board):
-                if not find_empty(sudoku.game_board):
+                if not sudoku.find_empty(sudoku.game_board):
                     time_played = self._timer(False)
                     self._write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played)
                     screen = "END"

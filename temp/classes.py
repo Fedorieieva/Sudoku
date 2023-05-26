@@ -1,27 +1,261 @@
 import copy
+import random
 # from solver import Solver
-from solver import*
 from config import*
+#
+#
+# class Solver:
+#     def __init__(self):
+#         self._board = [[0 for i in range(9)] for j in range(9)]   # Initialize a 9x9 grid with all zeros
+#
+#     @staticmethod
+#     def valid(board, num, position):
+#         # Check if the number is already in the same row or column
+#         for i in range(9):
+#             if num == board[position[0]][i]:
+#                 return False
+#         for i in range(9):
+#             if num == board[i][position[1]]:
+#                 return False
+#         # Check if the number is already in the same 3x3 sub-grid
+#         for i in range((position[0] // 3) * 3, (position[0] // 3) * 3 + 3):
+#             for j in range((position[1] // 3) * 3, (position[1] // 3) * 3 + 3):
+#                 if num == board[i][j]:
+#                     return False
+#         return True  # Return True if the number can be placed at the given location
+#
+#     @staticmethod
+#     def find_empty(board):
+#         for i in range(9):
+#             for j in range(9):
+#                 if board[i][j] == 0:
+#                     return i, j  # Return the location of the empty cell
+#         return False  # Return False if no empty cell is found
+#
+#     @staticmethod
+#     def solve(board):
+#         if not Solver.find_empty(board):
+#             return True  # If the grid is completely filled, return True
+#         else:
+#             position = Solver.find_empty(board)  # Find an empty cell on the grid
+#             for i in range(1, 10):  # Try each number from 1 to 9 at the empty cell
+#                 if Solver.valid(board, i, position):  # If the number is valid at the empty cell
+#                     board[position[0]][position[1]] = i  # Place the number at the empty cell
+#                     if Solver.solve(board):  # Recursively solve the puzzle
+#                         return True  # If the puzzle is solved, return True
+#                     # If the puzzle cannot be solved, backtrack by removing the number from the empty cell
+#                     board[position[0]][position[1]] = 0
+#         return False  # If the puzzle cannot be solved, return False
+#
+#     def generate(self):
+#         row = random.randrange(9)  # Choose a random row
+#         col = random.randrange(9)  # Choose a random column
+#         num = random.randrange(1, 10)  # Choose a random number from 1 to 9
+#
+#         for i in range(30):  # Fill 20 cells with valid random numbers
+#             # If the chosen number is not valid or the cell is already filled, choose new random numbers
+#             while not Solver.valid(self._board, num, (row, col)) or self._board[row][col] != 0:
+#                 row = random.randrange(9)
+#                 col = random.randrange(9)
+#                 num = random.randrange(1, 10)
+#             self._board[row][col] = num  # Place the valid random number at the chosen cell
+#
+#         copy_grid = copy.deepcopy(self._board)  # Create a deep copy of the grid
+#         if not Solver.solve(copy_grid):  # If the puzzle cannot be solved generate new grid
+#             self._board = self.generate()
+#
+#         return self._board
+#
+#     @staticmethod
+#     def find_best_indexes(board):
+#         scores = []
+#
+#         for row in range(9):
+#             for col in range(9):
+#                 if board[row][col] == 0:
+#                     score = Solver.calculate_score(board, row, col)
+#                     scores.append((score, row, col))
+#
+#         scores.sort(key=lambda x: x[0])  # Sort the scores based on the first element (score) in ascending order
+#
+#         best_indexes = [(row, col) for _, row, col in scores]
+#
+#         # Find best indexes for the row
+#         for row in range(9):
+#             for col in range(9):
+#                 if board[row][col] == 0:
+#                     score = Solver.calculate_score(board, row, col)
+#                     if score == scores[0][0]:
+#                         best_indexes.append((row, col))
+#
+#             # Find best indexes for the column
+#         for col in range(9):
+#             for row in range(9):
+#                 if board[row][col] == 0:
+#                     score = Solver.calculate_score(board, row, col)
+#                     if score == scores[0][0]:
+#                         best_indexes.append((row, col))
+#
+#         return best_indexes
+#
+#     @staticmethod
+#     def calculate_score(board, row, col):
+#         score = 0
+#
+#         # Check the number of empty cells in the same row
+#         for c in range(9):
+#             if board[row][c] == 0:
+#                 score += 1
+#
+#         # Check the number of empty cells in the same column
+#         for r in range(9):
+#             if board[r][col] == 0:
+#                 score += 1
+#
+#         # Check the number of empty cells in the same 3x3 box
+#         box_start_row = (row // 3) * 3
+#         box_start_col = (col // 3) * 3
+#         for r in range(box_start_row, box_start_row + 3):
+#             for c in range(box_start_col, box_start_col + 3):
+#                 if board[r][c] == 0:
+#                     score += 1
+#
+#         return score
 
 
 class Game:
     def __init__(self):
         # self._solver = Solver()
-        # self._board = self._solver.generate()  # creates a board by calling the `generate` function
-        self._board = generate()  # creates a board by calling the `generate` function
-        self._initial_board = tuple(map(tuple, self._board))
-        self._mouse_active = False  # sets `mouse_active` to False
-        self._key_active = False  # sets `key_active` to False
-        self._info = ''      # initializes an empty string for `info`
+        self._game_board = Game.generate()
+        self._initial_board = tuple(map(tuple, self._game_board))
+        self._mouse_active = False
+        self._key_active = False
+        self._info = ''
         self._mistakes = 0
         self._hints = 0
-        self._selected_col = 0      # initializes the selected column to 0
-        self._selected_row = 0      # initializes the selected row to 0
-        self._location = [0, 0]   # initializes the location of the selected box to 0
+        self._selected_col = 0
+        self._selected_row = 0
+        self._location = [0, 0]
+
+    @staticmethod
+    def generate():
+        board = [[0 for i in range(9)] for j in range(9)]
+        row = random.randrange(9)
+        col = random.randrange(9)
+        num = random.randrange(1, 10)
+
+        for i in range(30):  # Fill 20 cells with valid random numbers
+            # If the chosen number is not valid or the cell is already filled, choose new random numbers
+            while not Game.valid(board, num, (row, col)) or board[row][col] != 0:
+                row = random.randrange(9)
+                col = random.randrange(9)
+                num = random.randrange(1, 10)
+            board[row][col] = num  # Place the valid random number at the chosen cell
+
+        copy_grid = copy.deepcopy(board)  # Create a deep copy of the grid
+        if not Game.solve(copy_grid):  # If the puzzle cannot be solved generate new grid
+            board = Game.generate()
+
+        return board
+
+    @staticmethod
+    def valid(board, num, position):
+        # Check if the number is already in the same row or column
+        for i in range(9):
+            if num == board[position[0]][i]:
+                return False
+        for i in range(9):
+            if num == board[i][position[1]]:
+                return False
+        # Check if the number is already in the same 3x3 sub-grid
+        for i in range((position[0] // 3) * 3, (position[0] // 3) * 3 + 3):
+            for j in range((position[1] // 3) * 3, (position[1] // 3) * 3 + 3):
+                if num == board[i][j]:
+                    return False
+        return True
+
+    @staticmethod
+    def find_empty(board):
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == 0:
+                    return i, j  # Return the location of the empty cell
+        return False  # Return False if no empty cell is found
+
+    @staticmethod
+    def solve(board):
+        if not Game.find_empty(board):
+            return True
+        else:
+            position = Game.find_empty(board)
+            for i in range(1, 10):
+                if Game.valid(board, i, position):
+                    board[position[0]][position[1]] = i  # Place the number at the empty cell
+                    if Game.solve(board):  # Recursively solve the puzzle
+                        return True
+                    # If the puzzle cannot be solved, backtrack by removing the number from the empty cell
+                    board[position[0]][position[1]] = 0
+        return False  # If the puzzle cannot be solved, return False
+
+    @staticmethod
+    def calculate_score(board, row, col):
+        score = 0
+
+        # Check the number of empty cells in the same row
+        for c in range(9):
+            if board[row][c] == 0:
+                score += 1
+
+        # Check the number of empty cells in the same column
+        for r in range(9):
+            if board[r][col] == 0:
+                score += 1
+
+        # Check the number of empty cells in the same 3x3 box
+        box_start_row = (row // 3) * 3
+        box_start_col = (col // 3) * 3
+        for r in range(box_start_row, box_start_row + 3):
+            for c in range(box_start_col, box_start_col + 3):
+                if board[r][c] == 0:
+                    score += 1
+
+        return score
+
+    @staticmethod
+    def find_best_indexes(board):
+        scores = []
+
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    score = Game.calculate_score(board, row, col)
+                    scores.append((score, row, col))
+
+        scores.sort(key=lambda x: x[0])  # Sort the scores based on the first element (score) in ascending order
+
+        best_indexes = [(row, col) for _, row, col in scores]
+
+        # Find best indexes for the row
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    score = Game.calculate_score(board, row, col)
+                    if score == scores[0][0]:
+                        best_indexes.append((row, col))
+
+            # Find best indexes for the column
+        for col in range(9):
+            for row in range(9):
+                if board[row][col] == 0:
+                    score = Game.calculate_score(board, row, col)
+                    if score == scores[0][0]:
+                        best_indexes.append((row, col))
+
+        return best_indexes
 
     @property
     def game_board(self):
-        return self._board
+        return self._game_board
 
     @property
     def mouse_active(self):
@@ -48,7 +282,7 @@ class Game:
         self._hints = hints
 
     def draw_game(self):    # IS USED IN MAIN
-        increment = MARGIN      # sets the increment to the `MARGIN`
+        increment = MARGIN
         for i in range(SECTION + 1):
             # draws the horizontal lines of the board
             pygame.draw.line(SCREEN, COL_BLACK, (MARGIN, increment), (WINDOW_SIZE - MARGIN, increment), 3)
@@ -57,7 +291,7 @@ class Game:
             # updates the value of the increment for the next iteration
             increment += SECTION_SIZE
 
-        increment = MARGIN      # resets the increment to the `MARGIN` value
+        increment = MARGIN
         for i in range(SQUARE_NUM + 1):
             # draws the thin horizontal lines that separate the squares
             pygame.draw.line(SCREEN, COL_BLACK, (MARGIN, increment), (WINDOW_SIZE - MARGIN, increment))
@@ -66,34 +300,30 @@ class Game:
             # updates the value of the increment for the next iteration
             increment += SQUARE_SIZE
 
-        increment_x = increment_y = MARGIN + SQUARE_SIZE // 2  # initializes the increment_x and increment_y values
+        increment_x = increment_y = MARGIN + SQUARE_SIZE // 2
 
-        for row in range(9):      # loops over the rows of the board
-            for col in range(9):   # loops over the columns of the board
+        for row in range(9):
+            for col in range(9):
                 # if a box has a value that is not 0, render the value as text
-                if self._board[row][col] != 0 and self._board[row][col] != self._initial_board[row][col]:
-                    text = FONT.render(str(self._board[row][col]), True, COL_BLACK)
+                if self._game_board[row][col] != 0 and self._game_board[row][col] != self._initial_board[row][col]:
+                    text = FONT.render(str(self._game_board[row][col]), True, COL_BLACK)
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
                 elif self._initial_board[row][col] != 0:
-                    text = FONT.render(str(self._board[row][col]), True, (0, 0, 255))
+                    text = FONT.render(str(self._game_board[row][col]), True, (0, 0, 255))
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
 
-                increment_x += SQUARE_SIZE  # updates the value of the increment_x for the next iteration
-            increment_x = MARGIN + SQUARE_SIZE // 2  # resets the value of increment_x to the original value
-            increment_y += SQUARE_SIZE      # updates the value of increment_y for the next iteration
-        # increment_y = MARGIN + SQUARE_SIZE // 2 THE BEGINNING VARIANT!!!
-        # renders the "Press space-bar to solve" text
+                increment_x += SQUARE_SIZE
+            increment_x = MARGIN + SQUARE_SIZE // 2
+            increment_y += SQUARE_SIZE
         text = FONT.render("Press space-bar to solve", True, COL_BLACK)
-        text2 = FONT.render("Select section & press back-slash to show hint", True, COL_BLACK)
+        text2 = FONT.render("Press back-slash to show hint", True, COL_BLACK)
         SCREEN.blit(text, (MARGIN + 115, WINDOW_SIZE * 0.0155))
         SCREEN.blit(text2, (MARGIN - 27, WINDOW_SIZE * 0.06))
 
-    # This method takes in the mouse x and y coordinates and finds the corresponding row and column
-    # on the game board, as well as the pixel coordinates of the corresponding square on the game board.
     def find_location(self, mouse_x, mouse_y):  # IS USED IN MAIN
         # Calculate the column of the square that the mouse is currently over.
         self._selected_col = int((mouse_x - MARGIN) // SQUARE_SIZE)
@@ -105,78 +335,61 @@ class Game:
         # If the mouse is inside the game board and the square the mouse is over is empty,
         # set the mouse_active flag to true.
         if (mouse_x > MARGIN) and (mouse_x < WINDOW_SIZE - MARGIN) and (mouse_y > MARGIN) and \
-                (mouse_y < WINDOW_SIZE - MARGIN) and self._board[self._selected_row][self._selected_col] == 0:
-            self._info = ''  # Reset the info message.
+                (mouse_y < WINDOW_SIZE - MARGIN) and self._game_board[self._selected_row][self._selected_col] == 0:
+            self._info = ''
             self.mouse_active = True
         else:   # If the mouse is outside the game board or the square the mouse is over
             # is not empty, set the mouse_active flag to false.
-            del self._selected_row  # Delete the previously calculated row, column and location.
+            del self._selected_row
             del self._selected_col
             del self._location
-            self.mouse_active = False   # Set the mouse_active flag to false.
-            self._key_active = False     # Set the key_active flag to false.# IS USED IN MAIN
+            self.mouse_active = False
+            self._key_active = False
 
-    # This method draws a selection box around the square that the mouse is currently over.
     def draw_sel_box(self):     # IS USED IN MAIN
         pygame.draw.rect(SCREEN, SELECT_COL_LIGHT_GREEN, (self._location[0], self._location[1],
                                                           SQUARE_SIZE, SQUARE_SIZE), 4)
 
     def detect_keys(self, info, hint=False):    # IS USED IN MAIN
-        # Check if the pressed key is a number from 1 to 9
         if hint:
-            board_copy = copy.deepcopy(self._board)
-            # self._selected_row, self._selected_col = self._solver.find_best_indexes(board_copy)[0]
-            self._selected_row, self._selected_col = find_best_indexes(board_copy)[0]
+            board_copy = copy.deepcopy(self._game_board)
+            self._selected_row, self._selected_col = Game.find_best_indexes(board_copy)[0]
             for i in range(1, 10):
                 self._info = str(i)
                 self._finalize_key(True)
 
         if info.unicode in NUMBERS:
-            # If it is, set the key_active flag to True and store the number in the info attribute
             self._key_active = True
             self._info = info.unicode
         # Check if the pressed key is the Enter key and there is a number stored in the info attribute
         elif info.key == 13 and self._info in NUMBERS:
-            # If it is, call the finalize_key method
-            # self.finalize_key(info) THE BEGINNING VARIANT!!!
             self._finalize_key()
         else:
-            # Otherwise, set the key_active flag to False and clear the info attribute
             self._key_active = False
             # self._info = ''
 
     def draw_num(self):     # IS USED IN MAIN
-        # Create a text surface for the stored number with blue text
-        text = FONT.render(self._info, True, COL_BLACK)  # color blue when in box, then changes to black
-        # Get the rect for the text surface and center it in the box
+        text = FONT.render(self._info, True, COL_BLACK)
         text_rect = text.get_rect()
         text_rect.center = (self._location[0] + SQUARE_SIZE // 2, self._location[1] + SQUARE_SIZE // 2)
-        # Draw the text surface on the screen at the center of the box
         SCREEN.blit(text, text_rect)
 
-    # def finalize_key(self, event): THE BEGINNING VARIANT!!!
     def _finalize_key(self, hint=False):
-        board_copy = copy.deepcopy(self._board)     # create a copy of the current board
-        # set the value of the clicked square to the input number
+        board_copy = copy.deepcopy(self._game_board)
 
         board_copy[self._selected_row][self._selected_col] = int(self._info)
-        # if the move is valid and the board can be solved:
-        # if self._solver.valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
-        #         and self._solver.solve(board_copy):
-        if valid(self._board, int(self._info), (self._selected_row, self._selected_col)) \
-                and solve(board_copy):
-            # update the board with the new value
-            self._board[self._selected_row][self._selected_col] = int(self._info)
-        elif not hint:    # if the user did not request a hint:
-            self._mistakes += 1      # increase the mistakes count
-        self.mouse_active = False  # deactivate mouse
-        self._key_active = False  # deactivate keyboard
-        self._info = ''      # reset input information
+        if Game.valid(self._game_board, int(self._info), (self._selected_row, self._selected_col)) \
+                and Game.solve(board_copy):
+            self._game_board[self._selected_row][self._selected_col] = int(self._info)
+        elif not hint:
+            self._mistakes += 1
+        self.mouse_active = False
+        self._key_active = False
+        self._info = ''
 
     def draw_mistakes(self):
-        # create a text object with the number of mistakes
         text = LOWER_FONT.render("Mistakes " + str(self._mistakes), True, COL_BLACK)
-        SCREEN.blit(text, (MARGIN, WINDOW_SIZE * 0.925))       # draw the text at the bottom of the screen
+        SCREEN.blit(text, (MARGIN, WINDOW_SIZE * 0.925))
 
     def draw_hints(self):
         text = LOWER_FONT.render("Hints: " + str(self._hints), True, COL_BLACK)
