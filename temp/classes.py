@@ -127,6 +127,15 @@ class Game:
     def __init__(self):
         # self._solver = Solver()
         self._game_board = Game.generate()
+        # self._game_board = [[0, 0, 0, 0, 2, 7, 6, 0, 0],
+        #                     [6, 0, 3, 5, 0, 8, 0, 0, 0],
+        #                     [0, 0, 0, 3, 0, 1, 8, 0, 9],
+        #                     [2, 0, 0, 0, 0, 0, 9, 0, 7],
+        #                     [3, 0, 0, 0, 0, 0, 0, 8, 0],
+        #                     [0, 0, 5, 7, 4, 0, 3, 0, 0],
+        #                     [8, 0, 6, 0, 0, 0, 2, 0, 0],
+        #                     [4, 0, 0, 0, 5, 6, 7, 0, 8],
+        #                     [0, 2, 0, 0, 0, 0, 0, 4, 0]]
         self._initial_board = tuple(map(tuple, self._game_board))
         self._mouse_active = False
         self._key_active = False
@@ -223,35 +232,95 @@ class Game:
 
     @staticmethod
     def find_best_indexes(board):
-        scores = []
+        empty_cells = []
 
         for row in range(9):
             for col in range(9):
                 if board[row][col] == 0:
-                    score = Game.calculate_score(board, row, col)
-                    scores.append((score, row, col))
+                    options = 0
 
-        scores.sort(key=lambda x: x[0])  # Sort the scores based on the first element (score) in ascending order
+                    for num in range(1, 10):
+                        if Game.is_valid(board, num, row, col):
+                            options += 1
 
-        best_indexes = [(row, col) for _, row, col in scores]
+                    empty_cells.append((row, col, options))
 
-        # Find best indexes for the row
-        for row in range(9):
-            for col in range(9):
-                if board[row][col] == 0:
-                    score = Game.calculate_score(board, row, col)
-                    if score == scores[0][0]:
-                        best_indexes.append((row, col))
+        empty_cells.sort(key=lambda x: (x[2]))
+        return empty_cells
 
-            # Find best indexes for the column
-        for col in range(9):
-            for row in range(9):
-                if board[row][col] == 0:
-                    score = Game.calculate_score(board, row, col)
-                    if score == scores[0][0]:
-                        best_indexes.append((row, col))
+    @staticmethod
+    def is_valid(board, num, row, col):
+        for c in range(9):
+            if c != col and board[row][c] == num:
+                return False
 
-        return best_indexes
+        for r in range(9):
+            if r != row and board[r][col] == num:
+                return False
+
+        start_row = (row // 3) * 3
+        start_col = (col // 3) * 3
+        for r in range(start_row, start_row + 3):
+            for c in range(start_col, start_col + 3):
+                if (r != row or c != col) and board[r][c] == num:
+                    return False
+        return True
+
+    # @staticmethod
+    # def calculate_score(board, row, col):
+    #     score = 0
+    #
+    #     # Check the number of empty cells in the same row
+    #     for c in range(9):
+    #         if board[row][c] == 0:
+    #             score += 1
+    #
+    #     # Check the number of empty cells in the same column
+    #     for r in range(9):
+    #         if board[r][col] == 0:
+    #             score += 1
+    #
+    #     # Check the number of empty cells in the same 3x3 box
+    #     box_start_row = (row // 3) * 3
+    #     box_start_col = (col // 3) * 3
+    #     for r in range(box_start_row, box_start_row + 3):
+    #         for c in range(box_start_col, box_start_col + 3):
+    #             if board[r][c] == 0:
+    #                 score += 1
+    #
+    #     return score
+    #
+    # @staticmethod
+    # def find_best_indexes(board):
+    #     scores = []
+    #
+    #     for row in range(9):
+    #         for col in range(9):
+    #             if board[row][col] == 0:
+    #                 score = Game.calculate_score(board, row, col)
+    #                 scores.append((score, row, col))
+    #
+    #     scores.sort(key=lambda x: x[0])  # Sort the scores based on the first element (score) in ascending order
+    #
+    #     best_indexes = [(row, col) for _, row, col in scores]
+    #
+    #     # Find best indexes for the row
+    #     for row in range(9):
+    #         for col in range(9):
+    #             if board[row][col] == 0:
+    #                 score = Game.calculate_score(board, row, col)
+    #                 if score == scores[0][0]:
+    #                     best_indexes.append((row, col))
+    #
+    #         # Find best indexes for the column
+    #     for col in range(9):
+    #         for row in range(9):
+    #             if board[row][col] == 0:
+    #                 score = Game.calculate_score(board, row, col)
+    #                 if score == scores[0][0]:
+    #                     best_indexes.append((row, col))
+    #
+    #     return best_indexes
 
     @property
     def game_board(self):
@@ -353,7 +422,9 @@ class Game:
     def detect_keys(self, info, hint=False):    # IS USED IN MAIN
         if hint:
             board_copy = copy.deepcopy(self._game_board)
-            self._selected_row, self._selected_col = Game.find_best_indexes(board_copy)[0]
+            # self._selected_row, self._selected_col = Game.find_best_indexes(board_copy)
+            indexes = Game.find_best_indexes(board_copy)[0]
+            self._selected_row, self._selected_col, _ = indexes
             for i in range(1, 10):
                 self._info = str(i)
                 self._finalize_key(True)
