@@ -1,7 +1,7 @@
 import time
-# from solver import Solver
 from config import*
-from classes import Game, HomeScreen, EndScreen
+from game import Game
+from screen import HomeScreen, EndScreen
 
 
 class Main:
