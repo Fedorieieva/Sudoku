@@ -111,7 +111,7 @@ class Game:
         return score
 
     @staticmethod
-    def find_best_indexes(board):
+    def _find_best_indexes(board):
         empty_cells = []
 
         for row in range(9):
@@ -120,7 +120,7 @@ class Game:
                     options = 0
 
                     for num in range(1, 10):
-                        if Game.is_valid(board, num, row, col):
+                        if Game._is_valid(board, num, row, col):
                             options += 1
 
                     empty_cells.append((row, col, options))
@@ -129,7 +129,7 @@ class Game:
         return empty_cells
 
     @staticmethod
-    def is_valid(board, num, row, col):
+    def _is_valid(board, num, row, col):
         for c in range(9):
             if c != col and board[row][c] == num:
                 return False
@@ -138,10 +138,8 @@ class Game:
             if r != row and board[r][col] == num:
                 return False
 
-        start_row = (row // 3) * 3
-        start_col = (col // 3) * 3
-        for r in range(start_row, start_row + 3):
-            for c in range(start_col, start_col + 3):
+        for r in range((row // 3) * 3, (row // 3) * 3 + 3):
+            for c in range((col // 3) * 3, (col // 3) * 3 + 3):
                 if (r != row or c != col) and board[r][c] == num:
                     return False
         return True
@@ -215,7 +213,7 @@ class Game:
         text = FONT.render("Press space-bar to solve", True, COL_BLACK)
         text2 = FONT.render("Press back-slash to show hint", True, COL_BLACK)
         SCREEN.blit(text, (MARGIN + 115, WINDOW_SIZE * 0.0155))
-        SCREEN.blit(text2, (MARGIN - 27, WINDOW_SIZE * 0.06))
+        SCREEN.blit(text2, (MARGIN + 85, WINDOW_SIZE * 0.06))
 
     def find_location(self, mouse_x, mouse_y):  # IS USED IN MAIN
         # Calculate the column of the square that the mouse is currently over.
@@ -247,7 +245,7 @@ class Game:
         if hint:
             board_copy = copy.deepcopy(self._game_board)
             # self._selected_row, self._selected_col = Game.find_best_indexes(board_copy)
-            indexes = Game.find_best_indexes(board_copy)[0]
+            indexes = Game._find_best_indexes(board_copy)[0]
             self._selected_row, self._selected_col, _ = indexes
             for i in range(1, 10):
                 self._info = str(i)
