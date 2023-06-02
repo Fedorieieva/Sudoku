@@ -26,23 +26,15 @@ class Screen:
         return self._button_active
 
     def _button(self):
-        # self.mouse_x = pygame.mouse.get_pos()[0]      THE BEGINNING VARIANT!!!
-        # self.mouse_y = pygame.mouse.get_pos()[1]      THE BEGINNING VARIANT!!!
         self._mouse = pygame.mouse.get_pos()  # get the current mouse position and store it in the variable 'mouse'
 
-        # if (self.button_x + self.size_x) > self.mouse_x > self.button_x and \  THE BEGINNING VARIANT!!!
-        #         (self.button_y + self.size_y) > self.mouse_y > self.button_y:  THE BEGINNING VARIANT!!!
         if (self._button_x + self._size_x) > self._mouse[0] > self._button_x and \
                 (self._button_y + self._size_y) > self._mouse[1] > self._button_y:
-            # pygame.draw.rect(SCREEN, S_BUTTON_COL, (self.button_x, self.button_y, self.size_x, self.size_y))
-            # THE BEGINNING VARIANT!!!
             # if the mouse is over the button, draw the button with a different color and set it as active
             pygame.draw.rect(SCREEN, S_BUTTON_COL_DARK_BLUE,
                              (int(self._button_x), int(self._button_y), int(self._size_x), int(self._size_y)))
             self._button_active = True
         else:
-            # pygame.draw.rect(SCREEN, BUTTON_COL, (self.button_x, self.button_y, self.size_x, self.size_y))
-            # THE BEGINNING VARIANT!!!
             # if the mouse is not over the button, draw the button with the default color and set it as inactive
             pygame.draw.rect(SCREEN, BUTTON_COL_LIGHT_BLUE,
                              (int(self._button_x), int(self._button_y), int(self._size_x), int(self._size_y)))

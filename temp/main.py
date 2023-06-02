@@ -6,7 +6,6 @@ from screen import HomeScreen, EndScreen
 
 class Main:
     def __init__(self):
-        # self._solver = Solver()
         self.__minutes = 0
         self.__seconds = 0
         self.__start_time = 0
@@ -78,14 +77,14 @@ class Main:
                             sudoku.detect_keys(event)
                         if event.key == pygame.K_SPACE:
                             sudoku.solve(sudoku.game_board)
-                        if event.key == pygame.K_BACKSLASH:  # HINT !!!!!!
+                        if event.key == pygame.K_BACKSLASH:
                             sudoku.hints = (sudoku.hints + 1)
                             sudoku.detect_keys(event, True)
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 self.__timer(True)
                 sudoku.draw_game()
                 sudoku.draw_mistakes()
-                # sudoku.draw_hints()
+                sudoku.draw_hints()
 
                 if not sudoku.find_empty(sudoku.game_board):
                     time_played = self.__timer(False)
