@@ -5,7 +5,6 @@ from config import*
 
 class Game:
     def __init__(self):
-        # self._solver = Solver()
         self.__game_board = Game.generate()
         # self._game_board = [[0, 0, 0, 0, 2, 7, 6, 0, 0],
         #                     [6, 0, 3, 5, 0, 8, 0, 0, 0],
@@ -17,6 +16,7 @@ class Game:
         #                     [4, 0, 0, 0, 5, 6, 7, 0, 8],
         #                     [0, 2, 0, 0, 0, 0, 0, 4, 0]]
         self.__initial_board = tuple(map(tuple, self.__game_board))
+        self.__hint_board = [[0 for i in range(9)] for j in range(9)]
         self.__mouse_active = False
         self.__key_active = False
         self.__info = ''
@@ -148,7 +148,7 @@ class Game:
     def hints(self, hints):
         self.__hints = hints
 
-    def draw_game(self):    # IS USED IN MAIN
+    def draw_game(self):
         increment = MARGIN
         for i in range(SECTION + 1):
             # draws the horizontal lines of the board
@@ -172,13 +172,19 @@ class Game:
         for row in range(9):
             for col in range(9):
                 # if a box has a value that is not 0, render the value as text
-                if self.__game_board[row][col] != 0 and self.__game_board[row][col] != self.__initial_board[row][col]:
+                if self.__game_board[row][col] != 0 and self.__game_board[row][col] != self.__initial_board[row][col] \
+                        and self.__game_board[row][col] != self.__hint_board[row][col]:
                     text = FONT.render(str(self.__game_board[row][col]), True, COL_BLACK)
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
                 elif self.__initial_board[row][col] != 0:
                     text = FONT.render(str(self.__game_board[row][col]), True, (0, 0, 255))
+                    text_rect = text.get_rect()
+                    text_rect.center = (increment_x, increment_y)
+                    SCREEN.blit(text, text_rect)
+                elif self.__hint_board[row][col] != 0:
+                    text = FONT.render(str(self.__game_board[row][col]), True, (205, 149, 12))
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
@@ -191,7 +197,7 @@ class Game:
         SCREEN.blit(text, (MARGIN + 115, WINDOW_SIZE * 0.0155))
         SCREEN.blit(text2, (MARGIN + 85, WINDOW_SIZE * 0.06))
 
-    def find_location(self, mouse_x, mouse_y):  # IS USED IN MAIN
+    def find_location(self, mouse_x, mouse_y):
         # Calculate the column of the square that the mouse is currently over.
         self.__selected_col = int((mouse_x - MARGIN) // SQUARE_SIZE)
         # Calculate the row of the square that the mouse is currently over.
@@ -207,20 +213,19 @@ class Game:
             self.mouse_active = True
         else:   # If the mouse is outside the game board or the square the mouse is over
             # is not empty, set the mouse_active flag to false.
-            del self.__selected_row
-            del self.__selected_col
-            del self.__location
+            # del self.__selected_row
+            # del self.__selected_col
+            # del self.__location
             self.mouse_active = False
             self.__key_active = False
 
-    def draw_sel_box(self):     # IS USED IN MAIN
+    def draw_sel_box(self):
         pygame.draw.rect(SCREEN, SELECT_COL_LIGHT_GREEN, (self.__location[0], self.__location[1],
                                                           SQUARE_SIZE, SQUARE_SIZE), 4)
 
-    def detect_keys(self, info, hint=False):    # IS USED IN MAIN
+    def detect_keys(self, info, hint=False):
         if hint:
             board_copy = copy.deepcopy(self.__game_board)
-            # self._selected_row, self._selected_col = Game.find_best_indexes(board_copy)
             indexes = Game.__find_best_indexes(board_copy)[0]
             self.__selected_row, self.__selected_col, _ = indexes
             for i in range(1, 10):
@@ -235,9 +240,8 @@ class Game:
             self.__finalize_key()
         else:
             self.__key_active = False
-            # self._info = ''
 
-    def draw_num(self):     # IS USED IN MAIN
+    def draw_num(self):
         text = FONT.render(self.__info, True, COL_BLACK)
         text_rect = text.get_rect()
         text_rect.center = (self.__location[0] + SQUARE_SIZE // 2, self.__location[1] + SQUARE_SIZE // 2)
@@ -250,6 +254,8 @@ class Game:
         if Game.valid(self.__game_board, int(self.__info), (self.__selected_row, self.__selected_col)) \
                 and Game.solve(board_copy):
             self.__game_board[self.__selected_row][self.__selected_col] = int(self.__info)
+            if hint:
+                self.__hint_board[self.__selected_row][self.__selected_col] = int(self.__info)
         elif not hint:
             self.__mistakes += 1
         self.mouse_active = False

@@ -17,8 +17,6 @@ class Screen:
         # set the font size and type for the button text
         self._button_text = pygame.font.SysFont("Calibri", int(self._size_x * 0.12), 1.5)
         self._button_active = False  # Initializes the state of the button as inactive
-        # self.mouse_x = 0      THE BEGINNING VARIANT!!!
-        # self.mouse_y = 0      THE BEGINNING VARIANT!!!
         self._mouse = [0, 0]  # Initializes the position of the mouse
 
     @property
@@ -45,7 +43,7 @@ class HomeScreen(Screen):
     def __init__(self):
         super().__init__()
 
-    def draw_home(self):    # IS USED IN MAIN
+    def draw_home(self):
         # Render the main title "Sudoku" using the main_text font.
         text = self._main_text.render("Sudoku", True, COL_BLACK)
         # Get a rectangle representing the size of the text surface.
@@ -90,7 +88,7 @@ class EndScreen(Screen):
         text_rect.center = (WINDOW_SIZE // 2, WINDOW_SIZE // 2)       # Sets the position of the message
         SCREEN.blit(text, text_rect)
 
-        self._button()       # Draws the "Generate New Game" button
+        self._button()
         # Renders the button text
         text = self._button_text.render("   " * 19 + "Generate New Game!", True, BACKGROUND_COL_WIGHT)
         text_rect = text.get_rect()
