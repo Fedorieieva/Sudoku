@@ -124,6 +124,10 @@ class Game:
     def game_board(self):
         return self.__game_board
 
+    @game_board.setter
+    def game_board(self, board):
+        self.__game_board = board
+
     @property
     def mouse_active(self):
         return self.__mouse_active
@@ -139,6 +143,10 @@ class Game:
     @property
     def mistakes(self):
         return self.__mistakes
+
+    @mistakes.setter
+    def mistakes(self, num):
+        self.__mistakes = num
 
     @property
     def hints(self):
@@ -169,21 +177,28 @@ class Game:
 
         increment_x = increment_y = MARGIN + SQUARE_SIZE // 2
 
+        hint_matrix_sum = sum([num for row in self.__hint_board for num in row])
+
         for row in range(9):
             for col in range(9):
                 # if a box has a value that is not 0, render the value as text
-                if self.__game_board[row][col] != 0 and self.__game_board[row][col] != self.__initial_board[row][col] \
-                        and self.__game_board[row][col] != self.__hint_board[row][col]:
+                if self.__game_board[row][col] != 0 and self.__game_board[row][col] != self.__initial_board[row][
+                    col] and hint_matrix_sum != 0:
                     text = FONT.render(str(self.__game_board[row][col]), True, COL_BLACK)
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
-                elif self.__initial_board[row][col] != 0:
+                elif self.__game_board[row][col] != 0 and self.__game_board[row][col] != self.__initial_board[row][col] and self.__game_board[row][col] != self.__hint_board[row][col]:
+                    text = FONT.render(str(self.__game_board[row][col]), True, COL_BLACK)
+                    text_rect = text.get_rect()
+                    text_rect.center = (increment_x, increment_y)
+                    SCREEN.blit(text, text_rect)
+                elif self.__initial_board[row][col] != 0 and self.__game_board[row][col] != 0:
                     text = FONT.render(str(self.__game_board[row][col]), True, (0, 0, 255))
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)
                     SCREEN.blit(text, text_rect)
-                elif self.__hint_board[row][col] != 0:
+                elif self.__hint_board[row][col] != 0 and self.__game_board[row][col] != 0:
                     text = FONT.render(str(self.__game_board[row][col]), True, (205, 149, 12))
                     text_rect = text.get_rect()
                     text_rect.center = (increment_x, increment_y)

@@ -11,19 +11,46 @@ class Main:
         self.__start_time = 0
 
     @staticmethod
-    def __write_to_file(board, mistakes=0, hint=0, timer=()):
-        with open("sudoku_file_manager", 'a') as file:
-            if sum(sum(row) for row in board) < 405:
-                file.write("SUDOKU GAME:\n")
-                file.write("\tPUZZLE TO SOLVE:\n\n")
+    def __write_to_file(board, mistakes=0, hint=0, timer=(), filename='sudoku_file_manager', mode='a'):
+        with open(filename, mode) as file:
+            if filename is 'sudoku_continue':
                 for row in board:
-                    file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
+                    file.write(' '.join(map(str, row)) + '\n')
+                file.write(str(mistakes) + "\n" + str(hint))
+                file.write(str(timer[0]) + ":" + str(timer[1]))
             else:
-                file.write("\n\tSOLVED PUZZLE:\n\n")
-                for row in board:
-                    file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
-                file.write("\nMistakes: " + str(mistakes) + "\t\tHints: " + str(hint))
-                file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
+                if sum(sum(row) for row in board) < 405:
+                    file.write("SUDOKU GAME:\n")
+                    file.write("\tPUZZLE TO SOLVE:\n\n")
+                    for row in board:
+                        file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
+                else:
+                    file.write("\n\tSOLVED PUZZLE:\n\n")
+                    for row in board:
+                        file.write('\t' * 2 + ' '.join(map(str, row)) + '\n')
+                    file.write("\nMistakes: " + str(mistakes) + "\t\tHints: " + str(hint))
+                    file.write("\nIn time " + str(timer[0]) + ":" + str(timer[1]) + "\n" * 3)
+
+    def __read_continue_file(self):
+        matrix = []
+        mistake = None
+        with open('sudoku_continue', 'r') as file:
+            lines = file.readlines()
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.isdigit():
+                    mistake = int(line)
+                elif ':' in line:
+                    time_parts = line.split(':')
+                    self.__minutes = int(time_parts[0])
+                    self.__seconds = int(time_parts[1])
+                else:
+                    row = [int(num) for num in line.split()]
+                    matrix.append(row)
+
+        return matrix, mistake
 
     def __timer(self, stop=False):
         if stop:
@@ -68,6 +95,7 @@ class Main:
             if screen == "PLAY":
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        self.__write_to_file(sudoku.game_board, sudoku.mistakes, sudoku.hints, time_played, 'sudoku_continue', 'w')
                         playing = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -105,6 +133,10 @@ class Main:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if home.button_active:
                             self.__start_time = pygame.time.get_ticks()
+                            screen = "PLAY"
+                        if home.button2_active:
+                            sudoku = Game()
+                            sudoku.game_board, sudoku.mistakes = self.__read_continue_file()
                             screen = "PLAY"
                 SCREEN.fill(BACKGROUND_COL_WIGHT)
                 home.draw_home()
